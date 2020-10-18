@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Australian health expenditure by area and source</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.17.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.17.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.12.2"></script>
+</head>
+
+<body>
+    <div id="vis"></div>
+
+    <script type="text/javascript">
+        var config = {
+            title: {
+                text: "Australian health expenditure by area and source",
+                align: "left",
+                anchor: "start",
+                color: "#393e46",
+                fontSize: 30,
+            },
+            width: 1360,
+            height: 768,
+            projection: { type: "equirectangular" },
+            data: {
+                url: "aus.json",
+                format: { type: "topojson", feature: "states" },
+            },
+            transform: [
+                {
+                    lookup: "properties.STATE_NAME",
+                    from: {
+                        data: { url: "exp_by_state.csv" },
+                        key: "code",
+                        fields: ["real_expenditure_millions"],
+                    },
+                    default: 0,
+                },
+            ],
+            mark: { type: "geoshape" },
+
+            encoding: {
+                color: { field: "real_expenditure_millions", type: "quantitative" },
+                tooltip: [
+                    {
+                        field: "real_expenditure_millions",
+                        type: "quantitative",
+                        format: ".2%",
+                        title: "expenditure(millions)%",
+                    },
+                    {
+                        field: "properties.STATE_NAME",
+                        type: "norminal",
+                        title: "State",
+                    },
+                ],
+
+
+            },
+        };
+
+        vegaEmbed("#vis", config);
+
+    </script>
+
+</body>
+
+<script src="index.js"></script>
+
+</html>
